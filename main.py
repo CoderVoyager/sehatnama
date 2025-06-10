@@ -204,6 +204,26 @@ async def transcribe_audio_with_assemblyai(audio_url: str) -> str:
         raise HTTPException(status_code=500, detail=f"Failed to transcribe audio: {str(e)}")
 
 @app.get("/", response_class=HTMLResponse)
+@app.head("/")
+async def get_index():
+    try:
+        with open("static/index.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(content="""
+        <html>
+            <body>
+                <h1>Sehatnama - Clinical Notes Generator</h1>
+                <p>Frontend file not found. Please add index.html to the static directory.</p>
+                <p>Available API endpoints:</p>
+                <ul>
+                    <li>POST /generate-note - Generate note from transcript</li>
+                    <li>POST /upload-audio - Upload and process audio file</li>
+                    <li>POST /record-audio - Process recorded audio</li>
+                </ul>
+            </body>
+        </html>
+        """)
 async def get_index():
     try:
         with open("static/index.html", "r", encoding="utf-8") as f:
@@ -397,10 +417,12 @@ async def websocket_audio_recording(websocket: WebSocket):
     finally:
         manager.disconnect(websocket)
 
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
