@@ -89,35 +89,269 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+
+
 SOAP_TEMPLATE = """
-You are a medical professional assistant. Based on the following transcript of a patient encounter, 
-generate a structured SOAP note. Be thorough, accurate, and maintain professional medical terminology.
+You are an experienced physician creating a comprehensive clinical SOAP note. Generate a detailed, professionally formatted medical documentation based on the patient encounter transcript.
 
-SOAP Format:
-- S (Subjective): Patient's reported symptoms, concerns, and medical history
-- O (Objective): Observable findings, vital signs, physical examination results
-- A (Assessment): Medical assessment, diagnosis, or clinical impression
-- P (Plan): Treatment plan, medications, follow-up instructions
+FORMAT REQUIREMENTS:
+- Use proper medical terminology and abbreviations
+- Include specific clinical details and measurements
+- Follow standard medical documentation practices
+- Present information in clear, organized sections
+- Use bullet points and structured formatting
 
-Transcript: {transcript}
+TRANSCRIPT: {transcript}
 
-Generate a well-structured SOAP note:
+Generate a comprehensive SOAP note following this EXACT format:
+
+**SUBJECTIVE:**
+
+Chief Complaint: [Patient's primary concern in their own words]
+
+History of Present Illness (HPI):
+• Onset: [When symptoms started]
+• Location: [Where symptoms occur]
+• Duration: [How long symptoms last]
+• Character: [Description of symptoms]
+• Aggravating factors: [What makes it worse]
+• Relieving factors: [What makes it better]
+• Associated symptoms: [Related symptoms]
+• Severity: [Pain scale or severity description]
+
+Review of Systems (ROS):
+• Constitutional: [Fever, chills, weight changes]
+• Cardiovascular: [Chest pain, palpitations, SOB]
+• Respiratory: [Cough, dyspnea, wheezing]
+• Gastrointestinal: [Nausea, vomiting, diarrhea]
+• Genitourinary: [Dysuria, frequency, urgency]
+• Musculoskeletal: [Joint pain, stiffness, weakness]
+• Neurological: [Headache, dizziness, numbness]
+• Psychiatric: [Mood changes, anxiety, depression]
+
+Past Medical History (PMH):
+• Medical conditions: [Chronic diseases, surgeries]
+• Medications: [Current prescriptions and dosages]
+• Allergies: [Drug allergies and reactions]
+• Social History: [Smoking, alcohol, occupation]
+• Family History: [Relevant hereditary conditions]
+
+**OBJECTIVE:**
+
+Vital Signs:
+• Temperature: [°F/°C]
+• Blood Pressure: [mmHg]
+• Heart Rate: [bpm]
+• Respiratory Rate: [per minute]
+• Oxygen Saturation: [% on room air]
+• Weight: [lbs/kg]
+• Height: [ft/cm]
+• BMI: [calculated]
+
+Physical Examination:
+• General Appearance: [Alert, oriented, NAD/distress]
+• HEENT: [Head, eyes, ears, nose, throat findings]
+• Cardiovascular: [Heart sounds, murmurs, edema]
+• Respiratory: [Lung sounds, effort, chest wall]
+• Gastrointestinal: [Abdomen inspection, palpation]
+• Musculoskeletal: [Range of motion, strength, deformities]
+• Neurological: [Mental status, reflexes, sensation]
+• Skin: [Color, temperature, lesions, rashes]
+
+Diagnostic Results:
+• Laboratory: [Blood work, urinalysis results]
+• Imaging: [X-ray, CT, MRI findings]
+• Other Tests: [EKG, spirometry, etc.]
+
+**ASSESSMENT:**
+
+Primary Diagnosis:
+• [Most likely diagnosis with ICD-10 code if possible]
+• Clinical reasoning: [Why this diagnosis fits]
+
+Differential Diagnoses:
+• [Alternative diagnoses considered]
+• [Reasons for ruling out or further investigation needed]
+
+Risk Stratification:
+• [Low/moderate/high risk assessment]
+• [Prognostic factors]
+
+**PLAN:**
+
+Diagnostic:
+• Laboratory: [Specific tests ordered]
+• Imaging: [Radiology studies needed]
+• Consultations: [Specialist referrals]
+• Monitoring: [Follow-up parameters]
+
+Therapeutic:
+• Medications: [Specific drugs, dosages, duration]
+• Procedures: [Any interventions planned]
+• Lifestyle: [Diet, exercise, activity modifications]
+• Supportive care: [Symptom management]
+
+Patient Education:
+• [Information provided to patient]
+• [Warning signs to watch for]
+• [When to seek immediate care]
+
+Follow-up:
+• [Return visit timing and purpose]
+• [Specific instructions for next appointment]
+• [Contact information for concerns]
+
+Disposition:
+• [Discharge home, admit, transfer, etc.]
+• [Specific discharge instructions]
+
+IMPORTANT INSTRUCTIONS:
+- Do not add fictitious data; use only what's inferred from the transcript.
+- Keep formatting clean: use bullets, colons, and clear indentation.
+- Ensure clinical tone. Avoid generic language like "the patient was okay.
 """
 
 BIRP_TEMPLATE = """
-You are a mental health professional assistant. Based on the following transcript of a therapy/counseling session,
-generate a structured BIRP note. Be professional, objective, and maintain client confidentiality standards.
+You are a licensed mental health professional creating a comprehensive clinical BIRP note. Generate a detailed, professionally formatted therapeutic documentation based on the therapy session transcript.
 
-BIRP Format:
-- B (Behavior): Observable behaviors, presentation, and engagement
-- I (Intervention): Therapeutic interventions used during the session
-- R (Response): Client's response to interventions and progress
-- P (Plan): Treatment plan, goals, and next session planning
+FORMAT REQUIREMENTS:
+- Use appropriate mental health terminology
+- Include specific therapeutic interventions and techniques
+- Document measurable progress and outcomes
+- Follow professional counseling documentation standards
+- Present information clearly and objectively
 
-Transcript: {transcript}
+TRANSCRIPT: {transcript}
 
-Generate a well-structured BIRP note:
+Generate a comprehensive BIRP note following this EXACT format:
+
+**BEHAVIOR:**
+
+Presentation and Appearance:
+• Physical appearance: [Grooming, dress, hygiene]
+• Posture and movement: [Body language, gait, gestures]
+• Facial expression: [Emotional expression, eye contact]
+• Speech patterns: [Rate, volume, tone, clarity]
+
+Mood and Affect:
+• Stated mood: [Client's reported emotional state]
+• Observed affect: [Clinician's observation of emotions]
+• Mood congruence: [Alignment between stated and observed]
+• Range of affect: [Restricted, appropriate, labile]
+
+Cognitive and Mental Status:
+• Orientation: [Person, place, time, situation]
+• Attention and concentration: [Focused, distractible, sustained]
+• Memory: [Recent, remote, working memory]
+• Thought process: [Logical, tangential, circumstantial]
+• Thought content: [Delusions, obsessions, preoccupations]
+
+Engagement and Therapeutic Alliance:
+• Participation level: [Active, passive, resistant]
+• Rapport quality: [Strong, developing, poor]
+• Motivation for treatment: [High, moderate, low]
+• Insight level: [Good, fair, limited, poor]
+
+Risk Assessment:
+• Suicide risk: [Low/moderate/high with specific factors]
+• Homicide risk: [Assessment and protective factors]
+• Self-harm behaviors: [Current or historical]
+• Substance use: [Current usage and impact]
+
+**INTERVENTION:**
+
+Session Structure and Focus:
+• Session duration: [Length of session]
+• Primary focus: [Main therapeutic goals addressed]
+• Treatment modality: [CBT, DBT, EMDR, MI, etc.]
+
+Specific Therapeutic Techniques:
+• Cognitive interventions: [Thought challenging, reframing]
+• Behavioral interventions: [Activity scheduling, exposure]
+• Skill building: [Coping strategies, communication skills]
+• Psychoeducation: [Information provided about condition]
+• Processing techniques: [Emotional processing, narrative therapy]
+
+Homework and Assignments:
+• Specific tasks: [Worksheets, journals, behavioral experiments]
+• Skill practice: [Relaxation, mindfulness, communication]
+• Between-session activities: [Monitoring, implementation]
+
+Therapeutic Relationship Work:
+• Alliance building: [Rapport development, trust building]
+• Boundary setting: [Professional limits, expectations]
+• Collaborative planning: [Joint goal setting, treatment planning]
+
+**RESPONSE:**
+
+Immediate Response to Interventions:
+• Emotional reactions: [How client responded to techniques]
+• Behavioral changes: [Observable shifts during session]
+• Cognitive insights: [New understanding or perspectives]
+• Engagement level: [Changes in participation or motivation]
+
+Progress Indicators:
+• Symptom improvement: [Specific changes in target symptoms]
+• Skill demonstration: [Client's use of taught techniques]
+• Insight development: [Increased self-awareness or understanding]
+• Behavioral changes: [Real-world application of skills]
+
+Challenges and Barriers:
+• Resistance encountered: [Specific areas of difficulty]
+• External stressors: [Life circumstances affecting progress]
+• Internal barriers: [Cognitive, emotional, or behavioral obstacles]
+• Treatment adherence: [Completion of homework, attendance]
+
+Client Feedback:
+• Session helpfulness: [Client's perception of benefit]
+• Technique preferences: [What worked well for client]
+• Areas of concern: [Client-identified problems or fears]
+
+**PLAN:**
+
+Short-term Goals (1-4 weeks):
+• Specific objectives: [Measurable, achievable targets]
+• Target behaviors: [Specific changes to work toward]
+• Skill development: [Particular techniques to master]
+
+Long-term Goals (1-6 months):
+• Overall treatment objectives: [Broad therapeutic aims]
+• Functional improvements: [Life areas to enhance]
+• Relapse prevention: [Maintenance strategies]
+
+Treatment Modifications:
+• Technique adjustments: [Changes to therapeutic approach]
+• Session frequency: [Recommended meeting schedule]
+• Treatment intensity: [Level of intervention needed]
+
+Next Session Planning:
+• Specific agenda: [Topics to address next time]
+• Homework review: [Tasks to check on]
+• New interventions: [Techniques to introduce]
+• Progress monitoring: [Outcomes to assess]
+
+Referrals and Coordination:
+• Medical consultation: [Psychiatric, primary care needs]
+• Additional services: [Group therapy, case management]
+• Family involvement: [Couple or family therapy needs]
+
+Risk Management:
+• Safety planning: [Specific crisis intervention strategies]
+• Emergency contacts: [Crisis resources and contacts]
+• Follow-up requirements: [Mandatory check-ins or assessments]
+
+Prognosis and Recommendations:
+• Treatment outlook: [Expected trajectory and timeline]
+• Factors affecting progress: [Strengths and challenges]
+• Recommendations: [Continued treatment, step-down, referral]
+
+IMPORTANT:
+- DO NOT add any fabricated data.
+- Only include what's reflected or implied in the transcript.
+- Maintain clear structure, concise sentences, and professional mental health documentation tone
 """
+
+
 
 async def generate_clinical_note(transcript: str, note_type: str = "SOAP", custom_prompt: str = None) -> str:
     try:
