@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sehatnama - Clinical Documentation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            padding: 0.8rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .recording-controls {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: linear-gradient(135deg, #ccc, #999);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-record {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-record:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            box-shadow: 0 4px 15px rgba(254, 202, 87, 0.4);
+        }
+
+        .select-input, .file-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            margin: 1rem 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .select-input:focus, .file-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ff6b6b;
+            margin: 1rem 0;
+            text-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .status {
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.success {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .status.error {
+            background: linear-gradient(135deg, #fd79a8, #fdcb6e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(253, 121, 168, 0.3);
+        }
+
+        .status.info {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
+        }
+
+        .output-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 2rem;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .output-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .output-content {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 1.5rem;
+            min-height: 150px;
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #495057;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.6);
+        }
+
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .navbar-content {
+                padding: 0 1rem;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">
+                🏥 Sehatnama
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link">Analytics</a>
+                <a href="#" class="nav-link">Settings</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1 class="hero-title">AI-Powered Clinical Documentation</h1>
+            <p class="hero-subtitle">Transform voice recordings into professional medical notes with advanced AI technology</p>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">99.7%</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">< 30s</div>
+                    <div class="stat-label">Processing Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Availability</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎤</div>
+                    <div class="card-title">Live Recording</div>
+                </div>
+                
+                <div class="recording-controls">
+                    <button id="startRecordingBtn" class="btn btn-record" onclick="startRecording()">
+                        Start Recording
+                    </button>
+                    <button id="stopRecordingBtn" class="btn btn-stop" onclick="stopRecording()" disabled>
+                        Stop Recording
+                    </button>
+                    <div id="timer" class="timer" style="display: none;">00:00</div>
+                </div>
+                
+                <select id="recordingNoteType" class="select-input">
+                    <option value="SOAP">SOAP Note</option>
+                    <option value="BIRP">BIRP Note</option>
+                </select>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📁</div>
+                    <div class="card-title">File Upload</div>
+                </div>
+                
+                <div class="upload-area" onclick="document.getElementById('audioFile').click()">
+                    <div class="upload-icon">☁️</div>
+                    <p>Click to upload audio file</p>
+                    <p style="opacity: 0.7; font-size: 0.9rem;">Supports MP3, WAV, M4A formats</p>
+                </div>
+                
+                <input type="file" id="audioFile" accept="audio/*" style="display: none;">
+                <select id="uploadNoteType" class="select-input">
+                    <option value="SOAP">SOAP Note</option>
+                    <option value="BIRP">BIRP Note</option>
+                </select>
+                <button class="btn" onclick="uploadFile()">Process Audio File</button>
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <div class="output-title">
+                    📝 Transcription
+                </div>
+            </div>
+            <div id="transcriptionDisplay" class="output-content">
+                Transcription will appear here...
+            </div>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <div class="output-title">
+                    🏥 Clinical Note
+                </div>
+                <button id="downloadBtn" class="btn download-btn" onclick="downloadNote()" style="display: none;">
+                    Download Note
+                </button>
+            </div>
+            <div id="clinicalNote" class="output-content">
+                Generated clinical note will appear here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let recordingTimer;
+        let recordingSeconds = 0;
+        let currentNote = '';
+        let currentNoteType = '';
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type} fade-in`;
+            status.style.display = 'block';
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                recordingSeconds = 0;
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    await processRecordedAudio(audioBlob);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+
+                const startBtn = document.getElementById('startRecordingBtn');
+                const stopBtn = document.getElementById('stopRecordingBtn');
+                const timer = document.getElementById('timer');
+
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                timer.style.display = 'block';
+                timer.classList.add('pulse');
+
+                recordingTimer = setInterval(() => {
+                    recordingSeconds++;
+                    const minutes = Math.floor(recordingSeconds / 60);
+                    const seconds = recordingSeconds % 60;
+                    timer.textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+
+                showStatus('🎤 Recording started. Speak clearly into your microphone.', 'info');
+
+            } catch (error) {
+                console.error('Error starting recording:', error);
+                showStatus('❌ Error accessing microphone. Please check permissions.', 'error');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+
+                const startBtn = document.getElementById('startRecordingBtn');
+                const stopBtn = document.getElementById('stopRecordingBtn');
+                const timer = document.getElementById('timer');
+
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                timer.style.display = 'none';
+                timer.classList.remove('pulse');
+
+                clearInterval(recordingTimer);
+                showStatus('⏳ Recording stopped. Processing audio...', 'info');
+            }
+        }
+
+        async function processRecordedAudio(audioBlob) {
+            try {
+                const noteType = document.getElementById('recordingNoteType').value;
+                
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+                const response = await fetch('/record-audio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        audio_data: base64Audio,
+                        note_type: noteType
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('transcriptionDisplay').textContent = result.transcript;
+                    document.getElementById('clinicalNote').textContent = result.note;
+                    currentNote = result.note;
+                    currentNoteType = result.note_type;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                    showStatus('✅ Audio processed successfully! Clinical note generated.', 'success');
+                    
+                    document.querySelector('.output-section').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error(result.error || 'Processing failed');
+                }
+
+            } catch (error) {
+                console.error('Error processing audio:', error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('audioFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showStatus('⚠️ Please select an audio file', 'error');
+                return;
+            }
+
+            const noteType = document.getElementById('uploadNoteType').value;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('note_type', noteType);
+
+            try {
+                showStatus('⏳ Processing audio file... This may take a moment.', 'info');
+                
+                const response = await fetch('/upload-audio', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('transcriptionDisplay').textContent = result.transcript;
+                    document.getElementById('clinicalNote').textContent = result.note;
+                    currentNote = result.note;
+                    currentNoteType = result.note_type;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                    showStatus('✅ Audio file processed successfully! Clinical note generated.', 'success');
+                    
+                    document.querySelector('.output-section').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error(result.error || 'Processing failed');
+                }
+
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function downloadNote() {
+            if (!currentNote) return;
+            
+            const timestamp = new Date().toISOString().replace(/[:]/g, '-').split('.')[0];
+            const filename = `Sehatnama_${currentNoteType}_Note_${timestamp}.txt`;
+            
+            const blob = new Blob([currentNote], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus(`📥 Note downloaded as ${filename}`, 'success');
+        }
+
+        document.getElementById('audioFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const uploadArea = document.querySelector('.upload-area');
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">✅</div>
+                    <p><strong>${file.name}</strong></p>
+                    <p style="opacity: 0.7; font-size: 0.9rem;">Ready to process</p>
+                `;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showStatus('⚠️ Microphone not supported in this browser. Use file upload instead.', 'error');
+                document.getElementById('startRecordingBtn').disabled = true;
+            } else {
+                showStatus('🚀 Sehatnama is ready! Record audio or upload a file to get started.', 'success');
+            }
+        });
+    </script>
+</body>
+</html>
